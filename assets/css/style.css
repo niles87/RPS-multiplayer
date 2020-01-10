@@ -1,0 +1,63 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background-color: #70bdc2;
+}
+
+h2 {
+  text-align: center;
+  padding: 10px 0;
+  background-color: #70a2c2;
+}
+form {
+  justify-content: center;
+}
+
+.container {
+  display: grid;
+  grid-template-areas:
+    ". . . . . header . . . . ."
+    ". . . . . header . . . . ."
+    ". aside aside . . article . . sidebar sidebar ."
+    ". aside aside . . article . . sidebar sidebar ."
+    ". . . . . footer . . . . ."
+    ". . . . . footer . . . . .";
+}
+.box {
+  width: 100%;
+  height: 150px;
+  border: solid #000000 1px;
+}
+.textbox {
+  grid-area: footer;
+  justify-content: center;
+}
+.chat-box {
+  width: 100%;
+  height: 150px;
+  border: solid #000000 1px;
+  background-color: #ffffff;
+}
+.login {
+  grid-area: header;
+  justify-content: center;
+  margin: 20px 0;
+}
+#player1 {
+  grid-area: aside;
+  margin: 20px 0;
+  background-color: #b8d14f;
+}
+
+#choices {
+  grid-area: article;
+  margin: 20px 0;
+  background-color: #b8d14f;
+}
+#player2 {
+  grid-area: sidebar;
+  margin: 20px 0;
+  background-color: #b8d14f;
+}
