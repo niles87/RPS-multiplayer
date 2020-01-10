@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Rock Paper Scissors Duel</title>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-database.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <nav>
+      <h2>Rock Paper Scissors Battle</h2>
+    </nav>
+    <div class="container">
+      <div class="login">
+        <form>
+          <label for="player-name">Choose your name</label>
+          <input type="text" name="player-name" id="player-name" />
+          <input type="submit" value="name" id="name" />
+        </form>
+      </div>
+      <div class="box" id="player1">
+        <div id="first-player">your name</div>
+      </div>
+      <div class="box" id="choices"></div>
+      <div class="box" id="player2">
+        <div id="second-player">opponent name</div>
+      </div>
+      <div class="textbox">
+        <form>
+          <div class="chat-box" id="chat-arena"></div>
+          <input type="text" name="trash talk arena" id="chatbox" />
+          <input type="submit" value="send" id="chat" />
+        </form>
+      </div>
+    </div>
+    <script src="assets/javascript/game.js"></script>
+  </body>
+</html>
