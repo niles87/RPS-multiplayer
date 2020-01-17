@@ -15,9 +15,8 @@ firebase.initializeApp(config);
 const database = firebase.database();
 const chatRef = database.ref("chat");
 const turnRef = database.ref("turn");
-const connectionsRef = database.ref("connections");
-const connectedRef = database.ref(".info/connected");
 const playerRef = database.ref("players");
+const resultsRef = database.ref("results");
 
 // global variables
 var firstPlayer = null;
@@ -28,67 +27,59 @@ var turnNumber = 1;
 // database functions
 //
 
-connectedRef.on("value", function(snap) {
-  if (snap.val()) {
-    var connections = connectionsRef.push(true);
-
-    connections.onDisconnect().remove();
-  }
-});
-
-// player one added
-database.ref("/players/playerone").on(
-  "value",
-  function(p1SnapShot) {
-    console.log(p1SnapShot.val());
-    $("#first-player").html(p1SnapShot.val().name);
-    $("#player1wins").html(p1SnapShot.val().wins);
-    $("#player1loses").html(p1SnapShot.val().loses);
-    $("#player1ties").html(p1SnapShot.val().ties);
+//
+playerRef.on("value", function(playerSnap) {
+  // Checking for first player
+  if (playerSnap.child("playerone").exists()) {
+    console.log(playerSnap.child("playerone").val());
+    $("#first-player").html(playerSnap.child("playerone").val().name);
+    $("#player1wins").html(playerSnap.child("playerone").val().wins);
+    $("#player1loses").html(playerSnap.child("playerone").val().loses);
+    $("#player1ties").html(playerSnap.child("playerone").val().ties);
     firstPlayer = {
-      name: p1SnapShot.val().name,
-      loses: p1SnapShot.val().loses,
-      ties: p1SnapShot.val().ties,
-      wins: p1SnapShot.val().wins,
-      choice: p1SnapShot.val().choice,
+      name: playerSnap.child("playerone").val().name,
+      loses: playerSnap.child("playerone").val().loses,
+      ties: playerSnap.child("playerone").val().ties,
+      wins: playerSnap.child("playerone").val().wins,
+      choice: playerSnap.child("playerone").val().choice,
     };
     console.log(firstPlayer);
-    if (p1SnapShot.val() !== null) {
+    if (playerSnap.child("playerone") !== null) {
+      $("#results").empty();
       var waitingP = `<p>Waiting for a second player</p>`;
       $("#results").append(waitingP);
     }
-  },
-  function(errorObject) {
-    console.log("The read failed: " + errorObject.code);
+  } else {
+    firstPlayer = null;
+    waitingP = `<p>Waiting for player 1</p>`;
+    $("#results").empty();
+    $("#results").append(waitingP);
   }
-);
-
-// player two added
-database.ref("/players/playertwo").on(
-  "value",
-  function(p2SnapShot) {
-    $("#second-player").html(p2SnapShot.val().name);
-    $("#player2wins").html(p2SnapShot.val().wins);
-    $("#player2loses").html(p2SnapShot.val().loses);
-    $("#player2ties").html(p2SnapShot.val().ties);
+  if (playerSnap.child("playertwo").exists()) {
+    $("#second-player").html(playerSnap.child("playertwo").val().name);
+    $("#player2wins").html(playerSnap.child("playertwo").val().wins);
+    $("#player2loses").html(playerSnap.child("playertwo").val().loses);
+    $("#player2ties").html(playerSnap.child("playertwo").val().ties);
     secondPlayer = {
-      name: p2SnapShot.val().name,
-      loses: p2SnapShot.val().loses,
-      ties: p2SnapShot.val().ties,
-      wins: p2SnapShot.val().wins,
-      choice: p2SnapShot.val().choice,
+      name: playerSnap.child("playertwo").val().name,
+      loses: playerSnap.child("playertwo").val().loses,
+      ties: playerSnap.child("playertwo").val().ties,
+      wins: playerSnap.child("playertwo").val().wins,
+      choice: playerSnap.child("playertwo").val().choice,
     };
     console.log(secondPlayer);
-    if (p2SnapShot.val() !== null) {
+    if (playerSnap.child("playertwo").val() !== null) {
       $("#results").empty();
-      var waitingP = `<p>Waiting for player 1 to go</p>`;
+      var waitingP = `<p>Waiting for player 1 to choose</p>`;
       $("#results").append(waitingP);
     }
-  },
-  function(errorObject) {
-    console.log("The read failed: " + errorObject.code);
+  } else {
+    secondPlayer = null;
+    waitingP = `<p>Waiting for player 2</p>`;
+    $("#results").empty();
+    $("#results").append(waitingP);
   }
-);
+});
 
 // turn
 turnRef.on("value", function(turnSnapShot) {
