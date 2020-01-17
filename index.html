@@ -10,10 +10,10 @@
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
       crossorigin="anonymous"
     ></script>
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
-
     <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-auth.js"></script>
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
@@ -29,22 +29,40 @@
         </form>
       </div>
       <div class="box" id="player1">
-        <h4>Player 1</h4>
-        <div id="first-player"></div>
+        <h3>Player 1: <span id="first-player"></span></h3>
+        <br />
+        <button class="play1" value="r">ROCK</button>
+        <br />
+        <button class="play1" value="p">PAPER</button>
+        <br />
+        <button class="play1" value="s">SCISSORS</button>
+        <p id="scoretrackerp1">
+          Wins: <span id="player1wins"></span>, Loses: <span id="player1loses"></span>, Ties:
+          <span id="player1ties"></span>
+        </p>
       </div>
-      <div class="box" id="choices"></div>
+      <div class="box" id="results"></div>
       <div class="box" id="player2">
-        <h4>Player 2</h4>
-        <div id="second-player"></div>
+        <h3>Player 2: <span id="second-player"></span></h3>
+        <br />
+        <button class="play2" value="r">ROCK</button>
+        <br />
+        <button class="play2" value="p">PAPER</button>
+        <br />
+        <button class="play2" value="s">SCISSORS</button>
+        <p id="scoretrackerp2">
+          Wins: <span id="player2wins"></span>, Loses: <span id="player2loses"></span>, Ties:
+          <span id="player2ties"></span>
+        </p>
       </div>
       <div class="textbox">
         <form>
           <div class="chat-box" id="chat-arena"></div>
-          <input type="text" name="trash talk arena" id="chatbox" />
+          <input type="text" name="trash talk arena" id="chatbox" size="40" />
           <input type="submit" value="send" id="chat" />
         </form>
       </div>
     </div>
-    <script type="module" src="assets/javascript/game.js"></script>
+    <script src="assets/javascript/game.js"></script>
   </body>
 </html>
