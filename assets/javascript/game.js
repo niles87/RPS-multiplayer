@@ -1,111 +1,116 @@
-import { config } from "./keys.js";
+var config = {
+  apiKey: "AIzaSyDB75Vy1rhvgCXROeXxbWEAZPQtvWEmyzg",
+  authDomain: "rockpaperscissorsduel.firebaseapp.com",
+  databaseURL: "https://rockpaperscissorsduel.firebaseio.com",
+  projectId: "rockpaperscissorsduel",
+  storageBucket: "rockpaperscissorsduel.appspot.com",
+  messagingSenderId: "114611548615",
+  appId: "1:114611548615:web:7ed324223b2e21faa729e2",
+  measurementId: "G-43T9VGQG7N",
+};
 // Initialize Firebase
 firebase.initializeApp(config);
 
-// initial global variables
-var isTherePlayer1 = false;
-var didPlayerOnePick = false;
-var didPlayerTwoPick = false;
-var player1;
-var player2;
-var playerOneWins = 0;
-var playerOneLoses = 0;
-var playerTwoWins = 0;
-var playerTwoLoses = 0;
-var chatArr = [];
-var database = firebase.database();
+// firebase database reference
+const database = firebase.database();
+const chatRef = database.ref("chat");
+const playerRef = database.ref("players");
+const turnRef = database.ref("turn");
 
-database.ref("playerone").on(
-  "value",
-  function(data) {
-    console.log("on value change for playerone is working");
-    if (data.child("firstPlayerName").exists()) {
-      player1 = data.val().firstPlayerName;
-      console.log("--below is player one--");
-      console.log(player1);
-      $("#first-player").text(player1);
-      isTherePlayer1 = true;
-    }
-  },
-  function(errorObject) {
-    console.log("The read failed: " + errorObject.code);
-  }
-);
-database.ref("playertwo").on(
-  "value",
-  function(data) {
-    if (data.child("secondPlayerName").exists()) {
-      player2 = data.val().secondPlayerName;
-      console.log("--below is player two--");
-      console.log(player2);
-      $("#second-player").text(player2);
-      $("#name-input").hide();
-    }
-  },
-  function(errorObject) {
-    console.log("The read failed: " + errorObject.code);
-  }
-);
+// global variables
+var firstPlayer = null;
+var secondPlayer = null;
+var player1Choice = "";
+var player2Choice = "";
+var turnNumber = 1;
 
+//
+// database functions
+//
+
+// player one added
+database.ref("/players/playerone").on("value", function(p1SnapShot) {
+  console.log(p1SnapShot.val());
+  $("#first-player").html(p1SnapShot.val().name);
+  $("#player1wins").html(p1SnapShot.val().wins);
+  $("#player1loses").html(p1SnapShot.val().loses);
+  $("#player1ties").html(p1SnapShot.val().ties);
+  firstPlayer = {
+    name: p1SnapShot.val().name,
+    loses: p1SnapShot.val().loses,
+    ties: p1SnapShot.val().ties,
+    wins: p1SnapShot.val().wins,
+    choice: "",
+  };
+});
+
+// player two added
+database.ref("/players/playertwo").on("value", function(p2SnapShot) {
+  $("#second-player").html(p2SnapShot.val().name);
+  $("#player2wins").html(p2SnapShot.val().wins);
+  $("#player2loses").html(p2SnapShot.val().loses);
+  $("#player2ties").html(p2SnapShot.val().ties);
+  secondPlayer = {
+    name: p2SnapShot.val().name,
+    loses: p2SnapShot.val().loses,
+    ties: p2SnapShot.val().ties,
+    wins: p2SnapShot.val().wins,
+    choice: "",
+  };
+});
+
+chatRef.on("child_added", function(childSnapShot) {
+  var chatValue = $("<p>" + `${childSnapShot.val().chatText}` + "</p>");
+  $("#chat-arena").append(chatValue);
+});
+
+// adding player objects
 $("#name").on("click", function(event) {
   event.preventDefault();
-  if (isTherePlayer1 === false) {
-    isTherePlayer1 = true;
-    var firstPlayer = $("#player-name")
+  if (
+    firstPlayer === null &&
+    $("#player-name")
       .val()
-      .trim();
-    console.log(firstPlayer);
-    database.ref("playerone").set({
-      firstPlayerName: firstPlayer,
-    });
-
-    $("#first-player").text(firstPlayer);
-    $("#name-input").hide();
-    var waitingFor = $("<p>Waiting for another player</p>");
-    $("#choices").append(waitingFor);
-  } else {
-    var secondPlayer = $("#player-name")
+      .trim() !== ""
+  ) {
+    firstPlayer = {
+      name: $("#player-name")
+        .val()
+        .trim(),
+      loses: 0,
+      ties: 0,
+      wins: 0,
+    };
+    playerRef.child("/playerone/").set(firstPlayer);
+  } else if (
+    firstPlayer.name !== null &&
+    $("#player-name")
       .val()
-      .trim();
-    console.log(secondPlayer);
-    database.ref("playertwo").set({
-      secondPlayerName: secondPlayer,
-    });
-    $("#second-player").text(secondPlayer);
-    $("#name-input").hide();
-    $("#choices").empty();
-    startGame();
+      .trim() !== ""
+  ) {
+    secondPlayer = {
+      name: $("#player-name")
+        .val()
+        .trim(),
+      loses: 0,
+      ties: 0,
+      wins: 0,
+    };
+    playerRef.child("/playertwo/").set(secondPlayer);
   }
   $("#player-name").val("");
 });
 
+// click event listener on chat button to add chat to database
 $("#chat").on("click", function(event) {
   event.preventDefault();
   var chat = $("#chatbox")
     .val()
     .trim();
-  chatArr.push(chat);
-  console.log(chatArr);
-  var chatValue = $("<p>" + `${chat}` + "</p>");
-  $("#chat-arena").append(chatValue);
+
+  chatRef.push({
+    chatText: chat,
+  });
+
   $("#chatbox").val("");
 });
-
-function startGame() {
-  var choices = `
-  <p id="rock">ROCK</p>
-  <p id="paper">PAPER</p>
-  <p id="scissors">SCISSORS</p>
-  `;
-  $("#choices").append(choices);
-}
-
-function checkIfPlayerPickedAnElement() {
-  if (!didPlayerOnePick) {
-    var status = `<p class="status">Waiting for player 1</p>`;
-    $(".login").append(status);
-  } else if (!didPlayerTwoPick) {
-    status = `<p class="status">Waiting for player 2</p>`;
-    $(".login").append(status);
-  }
-}
