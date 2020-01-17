@@ -14,7 +14,9 @@ h2 {
 form {
   justify-content: center;
 }
-
+button {
+  border-radius: 20px;
+}
 .container {
   display: grid;
   grid-template-areas:
@@ -27,7 +29,7 @@ form {
 }
 .box {
   width: 75%;
-  height: 150px;
+  height: 190px;
   border: solid #000000 1px;
 }
 .textbox {
@@ -51,7 +53,7 @@ form {
   background-color: #b8d14f;
 }
 
-#choices {
+#results {
   grid-area: article;
   margin: 20px 0 20px 25px;
   background-color: #b8d14f;
@@ -60,4 +62,28 @@ form {
   grid-area: sidebar;
   margin: 20px 0;
   background-color: #b8d14f;
+}
+.play1 {
+  padding: 5px;
+  margin: 5px;
+  background-color: #00d8ff;
+}
+#scoretrackerp1 {
+  padding-top: 20px;
+  margin-left: 5px;
+}
+.play2 {
+  padding: 5px;
+  margin: 5px;
+  background-color: #00d8ff;
+}
+#scoretrackerp2 {
+  padding-top: 20px;
+  margin-left: 5px;
+}
+#chat {
+  padding: 1px;
+}
+#name {
+  padding: 1px;
 }
