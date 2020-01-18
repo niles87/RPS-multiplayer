@@ -15,15 +15,18 @@ h1 {
 button {
   border-radius: 20px;
 }
+p {
+  padding-left: 5px;
+}
 .container {
   display: grid;
   grid-template-areas:
-    ". . . . . header . . . . ."
-    ". . . . . header . . . . ."
-    ". aside aside . . article . . sidebar sidebar ."
-    ". aside aside . . article . . sidebar sidebar ."
-    ". . . . . footer . . . . ."
-    ". . . . . footer . . . . .";
+    ". . . . . set-name . . . . ."
+    ". . . . . set-name . . . . ."
+    ". player1 player1 . . results . . player2 player2 ."
+    ". player1 player1 . . results . . player2 player2 ."
+    ". . . . . textbox . . . . ."
+    ". . . . . textbox . . . . .";
 }
 .box {
   width: 70%;
@@ -32,7 +35,7 @@ button {
   border-radius: 5px;
 }
 .textbox {
-  grid-area: footer;
+  grid-area: textbox;
   text-align: center;
   margin: auto;
 }
@@ -43,29 +46,30 @@ button {
   background-color: #ffffff;
   overflow: auto;
   margin-top: 5%;
+  text-align: left;
 }
-.login {
-  grid-area: header;
+.set-name {
+  grid-area: set-name;
   text-align: center;
   margin: 20px 0;
 }
 .turn {
-  grid-area: header;
+  grid-area: set-name;
   text-align: center;
 }
 #player1 {
-  grid-area: aside;
+  grid-area: player1;
   margin: auto;
   background-color: #b8d14f;
 }
 
 #results {
-  grid-area: article;
+  grid-area: results;
   margin: auto;
   background-color: #b8d14f;
 }
 #player2 {
-  grid-area: sidebar;
+  grid-area: player2;
   margin: auto;
   background-color: #b8d14f;
 }
