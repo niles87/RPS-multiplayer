@@ -42,10 +42,9 @@ playerRef.on("value", function(playerSnap) {
       wins: playerSnap.child("playerone").val().wins,
       choice: playerSnap.child("playerone").val().choice,
     };
-    if (playerSnap.child("playerone") !== null) {
-      var waitingP = `<p>Waiting for a second player</p>`;
-      resultsRef.set({ result: waitingP });
-    }
+
+    var waitingP = `<p>Waiting for a second player</p>`;
+    resultsRef.set({ result: waitingP });
   } else {
     firstPlayer = null;
   }
@@ -61,10 +60,9 @@ playerRef.on("value", function(playerSnap) {
       wins: playerSnap.child("playertwo").val().wins,
       choice: playerSnap.child("playertwo").val().choice,
     };
-    if (playerSnap.child("playertwo").val() !== null) {
-      var waitingP = `<p>Waiting for player 1 to choose</p>`;
-      resultsRef.set({ result: waitingP });
-    }
+
+    var waitingP = `<p>Waiting for player 1 to choose</p>`;
+    resultsRef.set({ result: waitingP });
   } else {
     secondPlayer = null;
   }
@@ -72,10 +70,10 @@ playerRef.on("value", function(playerSnap) {
 
 // turn
 turnRef.on("value", function(turnSnapShot) {
-  if (firstPlayer && secondPlayer) {
-    turnNumber = turnSnapShot.val().turn;
-    $(".turn").html("<h3>Turn: " + turnSnapShot.val().turn + "</h3>");
-  }
+  // if (firstPlayer && secondPlayer) {
+  turnNumber = turnSnapShot.val().turn;
+  $(".turn").html("<h3>Turn: " + turnSnapShot.val().turn + "</h3>");
+  // }
 });
 
 // chat area
@@ -84,22 +82,25 @@ chatRef.on("child_added", function(childSnapShot) {
   $("#chat-arena").append(chatValue);
 });
 
+// results
 resultsRef.on("value", function(resultSnap) {
-  if (firstPlayer && secondPlayer) {
-    $("#results").empty();
-    $("#results").html(resultSnap.val().result);
-  } else if (!firstPlayer && secondPlayer) {
-    $("#results").empty();
-    $("#results").html(resultSnap.val().result);
-  } else if (firstPlayer && !secondPlayer) {
-    $("#results").empty();
-    $("#results").html(resultSnap.val().result);
-  }
+  // if (firstPlayer && secondPlayer) {
+  $("#results").empty();
+  $("#results").html(resultSnap.val().result);
+  // } else if (!firstPlayer && secondPlayer) {
+  //   $("#results").empty();
+  //   $("#results").html(resultSnap.val().result);
+  // } else if (firstPlayer && !secondPlayer) {
+  //   $("#results").empty();
+  //   $("#results").html(resultSnap.val().result);
+  // }
 });
 
 // adding player objects
 $("#name").on("click", function(event) {
   event.preventDefault();
+
+  // adding first player
   if (
     firstPlayer === null &&
     $("#player-name")
@@ -121,7 +122,10 @@ $("#name").on("click", function(event) {
       .child("/playerone")
       .onDisconnect()
       .remove();
-  } else if (
+  }
+
+  // adding second player
+  else if (
     firstPlayer.name !== null &&
     $("#player-name")
       .val()
@@ -136,7 +140,7 @@ $("#name").on("click", function(event) {
       wins: 0,
       choice: "",
     };
-    playerRef.child("/playertwo/").set(secondPlayer);
+    playerRef.child("/playertwo").set(secondPlayer);
     $(".login").hide();
     turnRef.set({ turn: turnNumber });
     playerRef
@@ -147,6 +151,7 @@ $("#name").on("click", function(event) {
   $("#player-name").val("");
 });
 
+// button click event for first player
 $(".play1").on("click", function() {
   if (turnNumber === 1) {
     firstPlayer.choice = $(this).attr("value");
@@ -159,15 +164,18 @@ $(".play1").on("click", function() {
   }
 });
 
+// click event for second player
 $(".play2").on("click", function() {
+  console.log(turnNumber);
   if (turnNumber === 2) {
+    console.log("second player is hitting button");
     secondPlayer.choice = $(this).attr("value");
 
     compareChoices();
   }
 });
 
-// click event listener on chat button to add chat to database
+// click event to add chat to database
 $("#chat").on("click", function(event) {
   event.preventDefault();
   var chat = $("#chatbox")
@@ -181,6 +189,7 @@ $("#chat").on("click", function(event) {
   $("#chatbox").val("");
 });
 
+// main game logic
 function compareChoices() {
   if (firstPlayer.choice === "r" && secondPlayer.choice === "r") {
     var results = `<h2>It's a tie!</h2>`;
