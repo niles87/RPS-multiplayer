@@ -31,7 +31,6 @@ var turnNumber = 1;
 playerRef.on("value", function(playerSnap) {
   // Checking for first player
   if (playerSnap.child("playerone").exists()) {
-    console.log(playerSnap.child("playerone").val());
     $("#first-player").html(playerSnap.child("playerone").val().name);
     $("#player1wins").html(playerSnap.child("playerone").val().wins);
     $("#player1loses").html(playerSnap.child("playerone").val().loses);
@@ -43,17 +42,12 @@ playerRef.on("value", function(playerSnap) {
       wins: playerSnap.child("playerone").val().wins,
       choice: playerSnap.child("playerone").val().choice,
     };
-    console.log(firstPlayer);
     if (playerSnap.child("playerone") !== null) {
-      $("#results").empty();
       var waitingP = `<p>Waiting for a second player</p>`;
-      $("#results").append(waitingP);
+      resultsRef.set({ result: waitingP });
     }
   } else {
     firstPlayer = null;
-    waitingP = `<p>Waiting for player 1</p>`;
-    $("#results").empty();
-    $("#results").append(waitingP);
   }
   if (playerSnap.child("playertwo").exists()) {
     $("#second-player").html(playerSnap.child("playertwo").val().name);
@@ -67,30 +61,40 @@ playerRef.on("value", function(playerSnap) {
       wins: playerSnap.child("playertwo").val().wins,
       choice: playerSnap.child("playertwo").val().choice,
     };
-    console.log(secondPlayer);
     if (playerSnap.child("playertwo").val() !== null) {
-      $("#results").empty();
       var waitingP = `<p>Waiting for player 1 to choose</p>`;
-      $("#results").append(waitingP);
+      resultsRef.set({ result: waitingP });
     }
   } else {
     secondPlayer = null;
-    waitingP = `<p>Waiting for player 2</p>`;
-    $("#results").empty();
-    $("#results").append(waitingP);
   }
 });
 
 // turn
 turnRef.on("value", function(turnSnapShot) {
-  turnNumber = turnSnapShot.val().turn;
-  $(".turn").html("<h3>Turn: " + turnSnapShot.val().turn + "</h3>");
+  if (firstPlayer && secondPlayer) {
+    turnNumber = turnSnapShot.val().turn;
+    $(".turn").html("<h3>Turn: " + turnSnapShot.val().turn + "</h3>");
+  }
 });
 
 // chat area
 chatRef.on("child_added", function(childSnapShot) {
   var chatValue = $("<p>" + `${childSnapShot.val().chatText}` + "</p>");
   $("#chat-arena").append(chatValue);
+});
+
+resultsRef.on("value", function(resultSnap) {
+  if (firstPlayer && secondPlayer) {
+    $("#results").empty();
+    $("#results").html(resultSnap.val().result);
+  } else if (!firstPlayer && secondPlayer) {
+    $("#results").empty();
+    $("#results").html(resultSnap.val().result);
+  } else if (firstPlayer && !secondPlayer) {
+    $("#results").empty();
+    $("#results").html(resultSnap.val().result);
+  }
 });
 
 // adding player objects
@@ -111,8 +115,12 @@ $("#name").on("click", function(event) {
       wins: 0,
       choice: "",
     };
-    playerRef.child("/playerone/").set(firstPlayer);
+    playerRef.child("/playerone").set(firstPlayer);
     $(".login").hide();
+    playerRef
+      .child("/playerone")
+      .onDisconnect()
+      .remove();
   } else if (
     firstPlayer.name !== null &&
     $("#player-name")
@@ -131,6 +139,10 @@ $("#name").on("click", function(event) {
     playerRef.child("/playertwo/").set(secondPlayer);
     $(".login").hide();
     turnRef.set({ turn: turnNumber });
+    playerRef
+      .child("/playertwo")
+      .onDisconnect()
+      .remove();
   }
   $("#player-name").val("");
 });
@@ -141,9 +153,9 @@ $(".play1").on("click", function() {
 
     turnNumber = 2;
     turnRef.set({ turn: turnNumber });
-    $("#results").empty();
+
     var waitingP = `<p>Waiting for ${secondPlayer.name} to go</p>`;
-    $("#results").append(waitingP);
+    resultsRef.set({ result: waitingP });
   }
 });
 
@@ -171,9 +183,8 @@ $("#chat").on("click", function(event) {
 
 function compareChoices() {
   if (firstPlayer.choice === "r" && secondPlayer.choice === "r") {
-    $("#results").empty();
     var results = `<h2>It's a tie!</h2>`;
-    $("#results").append(results);
+    resultsRef.set({ result: results });
     firstPlayer.ties += 1;
     secondPlayer.ties += 1;
     playerRef.child("playerone").set(firstPlayer);
@@ -181,9 +192,9 @@ function compareChoices() {
     turnNumber = 1;
     turnRef.set({ turn: turnNumber });
   } else if (firstPlayer.choice === "p" && secondPlayer.choice === "p") {
-    $("#results").empty();
     var results = `<h2>It's a tie!</h2>`;
-    $("#results").append(results);
+
+    resultsRef.set({ result: results });
     firstPlayer.ties += 1;
     secondPlayer.ties += 1;
     playerRef.child("playerone").set(firstPlayer);
@@ -191,9 +202,9 @@ function compareChoices() {
     turnNumber = 1;
     turnRef.set({ turn: turnNumber });
   } else if (firstPlayer.choice === "s" && secondPlayer.choice === "s") {
-    $("#results").empty();
     var results = `<h2>It's a tie!</h2>`;
-    $("#results").append(results);
+
+    resultsRef.set({ result: results });
     firstPlayer.ties += 1;
     secondPlayer.ties += 1;
     playerRef.child("playerone").set(firstPlayer);
@@ -201,9 +212,9 @@ function compareChoices() {
     turnNumber = 1;
     turnRef.set({ turn: turnNumber });
   } else if (firstPlayer.choice === "r" && secondPlayer.choice === "p") {
-    $("#results").empty();
     var results = `<h2>${secondPlayer.name} won!</h2>`;
-    $("#results").append(results);
+
+    resultsRef.set({ result: results });
     firstPlayer.loses += 1;
     secondPlayer.wins += 1;
     playerRef.child("playerone").set(firstPlayer);
@@ -211,9 +222,9 @@ function compareChoices() {
     turnNumber = 1;
     turnRef.set({ turn: turnNumber });
   } else if (firstPlayer.choice === "p" && secondPlayer.choice === "s") {
-    $("#results").empty();
     var results = `<h2>${secondPlayer.name} won!</h2>`;
-    $("#results").append(results);
+
+    resultsRef.set({ result: results });
     firstPlayer.loses += 1;
     secondPlayer.wins += 1;
     playerRef.child("playerone").set(firstPlayer);
@@ -221,9 +232,9 @@ function compareChoices() {
     turnNumber = 1;
     turnRef.set({ turn: turnNumber });
   } else if (firstPlayer.choice === "s" && secondPlayer.choice === "r") {
-    $("#results").empty();
     var results = `<h2>${secondPlayer.name} won!</h2>`;
-    $("#results").append(results);
+
+    resultsRef.set({ result: results });
     firstPlayer.loses += 1;
     secondPlayer.wins += 1;
     playerRef.child("playerone").set(firstPlayer);
@@ -231,9 +242,9 @@ function compareChoices() {
     turnNumber = 1;
     turnRef.set({ turn: turnNumber });
   } else if (firstPlayer.choice === "r" && secondPlayer.choice === "s") {
-    $("#results").empty();
     var results = `<h2>${firstPlayer.name} won!</h2>`;
-    $("#results").append(results);
+
+    resultsRef.set({ result: results });
     firstPlayer.wins += 1;
     secondPlayer.loses += 1;
     playerRef.child("playerone").set(firstPlayer);
@@ -241,9 +252,9 @@ function compareChoices() {
     turnNumber = 1;
     turnRef.set({ turn: turnNumber });
   } else if (firstPlayer.choice === "p" && secondPlayer.choice === "r") {
-    $("#results").empty();
     var results = `<h2>${firstPlayer.name} won!</h2>`;
-    $("#results").append(results);
+
+    resultsRef.set({ result: results });
     firstPlayer.wins += 1;
     secondPlayer.loses += 1;
     playerRef.child("playerone").set(firstPlayer);
@@ -251,9 +262,9 @@ function compareChoices() {
     turnNumber = 1;
     turnRef.set({ turn: turnNumber });
   } else if (firstPlayer.choice === "s" && secondPlayer.choice === "p") {
-    $("#results").empty();
     var results = `<h2>${firstPlayer.name} won!</h2>`;
-    $("#results").append(results);
+
+    resultsRef.set({ result: results });
     firstPlayer.wins += 1;
     secondPlayer.loses += 1;
     playerRef.child("playerone").set(firstPlayer);
