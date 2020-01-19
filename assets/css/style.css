@@ -2,37 +2,52 @@
   margin: 0;
   padding: 0;
 }
+/* html {
+  background-color: #000000;
+} */
 body {
-  background-color: #70bdc2;
+  background: url("../images/background_img.png") fixed center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 h1 {
   text-align: center;
   padding: 10px 0;
+  margin-bottom: 2%;
   background-color: #70a2c2;
 }
-
+h2 {
+  background-color: #ffffff;
+  padding: 1px;
+}
+h3 {
+  padding: 2px 1px;
+}
 button {
-  border-radius: 20px;
+  border-radius: 5px;
+  display: block;
+  outline: none;
 }
 p {
-  padding-left: 5px;
+  padding: 5px;
+  background-color: #ffffff;
 }
 .container {
   display: grid;
   grid-template-areas:
-    ". . . . . set-name . . . . ."
-    ". . . . . set-name . . . . ."
-    ". player1 player1 . . results . . player2 player2 ."
-    ". player1 player1 . . results . . player2 player2 ."
-    ". . . . . textbox . . . . ."
-    ". . . . . textbox . . . . .";
+    ". . . . set-name . . . ."
+    ". . . . turn . . . ."
+    ". player1 . . results . . player2 ."
+    ". player1 . . results . . player2 ."
+    ". . . . textbox . . . ."
+    ". . . . textbox . . . .";
 }
 .box {
-  width: 70%;
-  height: 190px;
+  width: 80%;
+  height: auto;
   border: solid #000000 1px;
-  border-radius: 5px;
+  border-radius: 6px;
 }
 .textbox {
   grid-area: textbox;
@@ -51,49 +66,66 @@ p {
 .set-name {
   grid-area: set-name;
   text-align: center;
-  margin: 20px 0;
 }
-.turn {
-  grid-area: set-name;
+#turn {
+  grid-area: turn;
   text-align: center;
+  color: #cccccc;
 }
 #player1 {
   grid-area: player1;
   margin: auto;
-  background-color: #b8d14f;
+  background: url("../images/player-1.png") no-repeat;
+  background-size: 100% 100%;
 }
 
 #results {
   grid-area: results;
   margin: auto;
-  background-color: #b8d14f;
+  margin-top: 2%;
+  margin-bottom: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  height: 200px;
 }
 #player2 {
   grid-area: player2;
   margin: auto;
-  background-color: #b8d14f;
+  background: url("../images/player-2.png") no-repeat;
+  background-size: 100% 100%;
 }
 .play1 {
   padding: 5px;
   margin: 5px;
-  background-color: #00d8ff;
+  background-color: transparent;
+  border: none;
 }
 #scoretrackerp1 {
-  padding-top: 20px;
   margin-left: 5px;
+  background-color: transparent;
 }
 .play2 {
   padding: 5px;
   margin: 5px;
-  background-color: #00d8ff;
+  background-color: transparent;
+  border: none;
 }
 #scoretrackerp2 {
-  padding-top: 20px;
   margin-left: 5px;
+  background-color: transparent;
 }
 #chat {
   padding: 1px;
 }
 #name {
+  padding: 1px;
+}
+#input-name {
+  color: #cccccc;
+}
+.chat-box p {
+  margin-left: 2px;
   padding: 1px;
 }
