@@ -23,13 +23,15 @@ var firstPlayer = null;
 var secondPlayer = null;
 var turnNumber;
 
+var yourPlayerName;
+
 //
 // database functions
 //
 
-//
+// players node on value change listener
 playerRef.on("value", function(playerSnap) {
-  // Checking for first player
+  // Checking for a first player
   if (playerSnap.child("playerone").exists()) {
     $("#first-player").html(playerSnap.child("playerone").val().name);
     $("#player1wins").html(playerSnap.child("playerone").val().wins);
@@ -45,6 +47,7 @@ playerRef.on("value", function(playerSnap) {
   } else {
     firstPlayer = null;
   }
+  // checking for a second player
   if (playerSnap.child("playertwo").exists()) {
     $("#second-player").html(playerSnap.child("playertwo").val().name);
     $("#player2wins").html(playerSnap.child("playertwo").val().wins);
@@ -59,6 +62,11 @@ playerRef.on("value", function(playerSnap) {
     };
   } else {
     secondPlayer = null;
+  }
+
+  // When both players are used hide the set-name form
+  if (playerSnap.child("playerone").exists() && playerSnap.child("playertwo").exists()) {
+    $(".set-name").hide();
   }
 });
 
@@ -95,6 +103,7 @@ playerRef.on("child_removed", function() {
   resultsRef.remove();
   turnRef.remove();
   chatRef.remove();
+  $(".set-name").show();
 });
 // adding player objects
 $("#name").on("click", function(event) {
@@ -107,17 +116,18 @@ $("#name").on("click", function(event) {
       .val()
       .trim() !== ""
   ) {
+    yourPlayerName = $("#player-name")
+      .val()
+      .trim();
     firstPlayer = {
-      name: $("#player-name")
-        .val()
-        .trim(),
+      name: yourPlayerName,
       loses: 0,
       ties: 0,
       wins: 0,
       choice: "",
     };
     playerRef.child("/playerone").set(firstPlayer);
-    $(".login").hide();
+    $(".set-name").hide();
     if (secondPlayer === null) {
       var firstPlayerSet = `<p>Waiting for a second player</p>`;
       resultsRef.set({ result: firstPlayerSet });
@@ -135,17 +145,18 @@ $("#name").on("click", function(event) {
       .val()
       .trim() !== ""
   ) {
+    yourPlayerName = $("#player-name")
+      .val()
+      .trim();
     var secondPlayer = {
-      name: $("#player-name")
-        .val()
-        .trim(),
+      name: yourPlayerName,
       loses: 0,
       ties: 0,
       wins: 0,
       choice: "",
     };
     playerRef.child("/playertwo").set(secondPlayer);
-    $(".login").hide();
+    $(".set-name").hide();
     turnRef.set({ turn: 1 });
     var secondPlayerAdded = `<p>${firstPlayer.name}'s turn</p>`;
     resultsRef.set({ result: secondPlayerAdded });
@@ -159,7 +170,7 @@ $("#name").on("click", function(event) {
 
 // button click event for first player
 $(".play1").on("click", function() {
-  if (turnNumber === 1) {
+  if (turnNumber === 1 && firstPlayer && secondPlayer && yourPlayerName === firstPlayer.name) {
     firstPlayer.choice = $(this).attr("value");
     playerRef.child("playerone").set(firstPlayer);
     turnRef.set({ turn: 2 });
@@ -171,7 +182,7 @@ $(".play1").on("click", function() {
 
 // click event for second player
 $(".play2").on("click", function() {
-  if (turnNumber === 2) {
+  if (turnNumber === 2 && firstPlayer && secondPlayer && yourPlayerName === secondPlayer.name) {
     secondPlayer.choice = $(this).attr("value");
     playerRef.child("playertwo").set(secondPlayer);
     compareChoices();
@@ -191,6 +202,8 @@ $("#chat").on("click", function(event) {
 
   $("#chatbox").val("");
 });
+
+// functions for game results
 function ifPlayersTie() {
   firstPlayer.ties += 1;
   playerRef.child("playerone").set(firstPlayer);
@@ -215,6 +228,7 @@ function ifPlayerTwoWins() {
   var results = `<h2>${secondPlayer.name} won!</h2>`;
   resultsRef.set({ result: results });
 }
+
 // main game logic
 function compareChoices() {
   if (firstPlayer.choice === "r" && secondPlayer.choice === "r") {
