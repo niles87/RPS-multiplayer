@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Rock Paper Scissors Duel</title>
+    <script src="https://kit.fontawesome.com/07d4bd49a2.js" crossorigin="anonymous"></script>
     <script
       src="https://code.jquery.com/jquery-3.4.1.min.js"
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -17,25 +18,25 @@
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
-    <h1>Rock Paper Scissors Battle</h1>
+    <h1>Rock Paper Scissors Duel</h1>
 
     <div class="container">
+      <div id="turn"></div>
       <div class="set-name">
         <form id="name-input">
-          <label for="player-name">Choose your name</label>
+          <label id="input-name" for="player-name">Choose your name</label>
           <input type="text" name="player-name" id="player-name" />
           <input type="submit" value="name" id="name" />
         </form>
       </div>
-      <div class="turn"></div>
       <div class="box" id="player1">
         <h3>Player 1: <span id="first-player"></span></h3>
-        <br />
-        <button class="play1" value="r">ROCK</button>
-        <br />
-        <button class="play1" value="p">PAPER</button>
-        <br />
-        <button class="play1" value="s">SCISSORS</button>
+
+        <button class="play1" value="r"><i class="fas fa-hand-rock fa-3x"></i></button>
+
+        <button class="play1" value="p"><i class="fas fa-hand-paper fa-3x"></i></button>
+
+        <button class="play1" value="s"><i class="fas fa-hand-scissors fa-3x"></i></button>
         <p id="scoretrackerp1">
           Wins: <span id="player1wins"></span>, Loses: <span id="player1loses"></span>, Ties:
           <span id="player1ties"></span>
@@ -44,12 +45,12 @@
       <div class="box" id="results"></div>
       <div class="box" id="player2">
         <h3>Player 2: <span id="second-player"></span></h3>
-        <br />
-        <button class="play2" value="r">ROCK</button>
-        <br />
-        <button class="play2" value="p">PAPER</button>
-        <br />
-        <button class="play2" value="s">SCISSORS</button>
+
+        <button class="play2" value="r"><i class="fas fa-hand-rock fa-3x"></i></button>
+
+        <button class="play2" value="p"><i class="fas fa-hand-paper fa-3x"></i></button>
+
+        <button class="play2" value="s"><i class="fas fa-hand-scissors fa-3x"></i></button>
         <p id="scoretrackerp2">
           Wins: <span id="player2wins"></span>, Loses: <span id="player2loses"></span>, Ties:
           <span id="player2ties"></span>
