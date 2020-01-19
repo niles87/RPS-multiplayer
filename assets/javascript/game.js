@@ -64,27 +64,37 @@ playerRef.on("value", function(playerSnap) {
     secondPlayer = null;
   }
 
-  // When both players are used hide the set-name form
+  // When both players exist hide the set-name form
   if (playerSnap.child("playerone").exists() && playerSnap.child("playertwo").exists()) {
     $(".set-name").hide();
+  } else {
+    $(".set-name").show();
   }
 });
 
-// turn
+// turn database value listener
 turnRef.on("value", function(turnSnapShot) {
   if (firstPlayer && secondPlayer) {
     turnNumber = turnSnapShot.val().turn;
-    $(".turn").html("<h3>Turn: " + turnNumber + "</h3>");
+    var turn = `<h3>Turn: ${turnNumber}</h3>`;
+    $("#turn").html(turn);
   }
 });
 
-// chat area
+// when a child is added to the chat node
 chatRef.on("child_added", function(childSnapShot) {
-  var chatValue = $("<p>" + `${childSnapShot.val().chatText}` + "</p>");
+  var chatValue = $(
+    "<p><span class='user'>" +
+      `${childSnapShot.val().user}` +
+      "</span>: " +
+      `${childSnapShot.val().chatText}` +
+      "</p>"
+  );
   $("#chat-arena").append(chatValue);
+  setUserNameColor();
 });
 
-// results
+// when a result is added to the results node
 resultsRef.on("value", function(resultSnap) {
   if (firstPlayer && secondPlayer) {
     $("#results").empty();
@@ -98,13 +108,14 @@ resultsRef.on("value", function(resultSnap) {
   }
 });
 
-// child removed
+// on browser refresh or closed
 playerRef.on("child_removed", function() {
   resultsRef.remove();
   turnRef.remove();
   chatRef.remove();
   $(".set-name").show();
 });
+
 // adding player objects
 $("#name").on("click", function(event) {
   event.preventDefault();
@@ -128,7 +139,7 @@ $("#name").on("click", function(event) {
     };
     playerRef.child("/playerone").set(firstPlayer);
     $(".set-name").hide();
-    if (secondPlayer === null) {
+    if (!secondPlayer) {
       var firstPlayerSet = `<p>Waiting for a second player</p>`;
       resultsRef.set({ result: firstPlayerSet });
     }
@@ -192,13 +203,26 @@ $(".play2").on("click", function() {
 // click event to add chat to database
 $("#chat").on("click", function(event) {
   event.preventDefault();
-  var chat = $("#chatbox")
-    .val()
-    .trim();
 
-  chatRef.push({
-    chatText: chat,
-  });
+  if (yourPlayerName === firstPlayer.name) {
+    var chat = $("#chatbox")
+      .val()
+      .trim();
+
+    chatRef.push({
+      user: yourPlayerName,
+      chatText: chat,
+    });
+  } else if (yourPlayerName === secondPlayer.name) {
+    var chat = $("#chatbox")
+      .val()
+      .trim();
+
+    chatRef.push({
+      user: yourPlayerName,
+      chatText: chat,
+    });
+  }
 
   $("#chatbox").val("");
 });
@@ -251,4 +275,13 @@ function compareChoices() {
     ifPlayerOneWins();
   }
   turnRef.set({ turn: 1 });
+}
+
+// setting the color of name in chat area
+function setUserNameColor() {
+  if (yourPlayerName === firstPlayer.name) {
+    $(".user").css("color", "#001fff");
+  } else {
+    $(".user").css("color", "#ff0000");
+  }
 }
