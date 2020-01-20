@@ -16,16 +16,25 @@ h1 {
   margin-bottom: 2%;
   -webkit-text-stroke: 1px #ffffff;
   font-family: "Audiowide", cursive;
+  font-size: 40px;
 }
+
 h2 {
   background-color: #ffffff;
-  padding: 1px;
+  padding: 1px 3px;
 }
+
 h3 {
-  padding: 2px 1px;
+  padding: 2px 3px;
+  font-size: 22px;
 }
+
+p {
+  font-weight: bold;
+  font-size: 18px;
+}
+
 button {
-  border-radius: 5px;
   display: block;
   outline: none;
 }
@@ -40,17 +49,20 @@ button {
     ". . . . textbox . . . ."
     ". . . . textbox . . . .";
 }
+
 .box {
   width: 80%;
   height: auto;
   border: solid #000000 1px;
   border-radius: 6px;
 }
+
 .textbox {
   grid-area: textbox;
   text-align: center;
   margin: auto;
 }
+
 .chat-box {
   width: 100%;
   height: 150px;
@@ -59,17 +71,20 @@ button {
   overflow: auto;
   margin-top: 5%;
   text-align: left;
+  border-radius: 5px;
 }
+
 .set-name {
   grid-area: set-name;
   text-align: center;
 }
+
 #turn {
   grid-area: turn;
   text-align: center;
-  color: #cccccc;
-  -webkit-text-stroke: 1px #ffffff;
+  color: #000000;
 }
+
 #player1 {
   grid-area: player1;
   margin: auto;
@@ -88,50 +103,59 @@ button {
   border: none;
   height: 200px;
 }
+
 #player2 {
   grid-area: player2;
   margin: auto;
   background: url("../images/player-2.png") no-repeat;
   background-size: 100% 100%;
 }
-.play1 {
-  padding: 5px;
-  margin: 5px;
-  background-color: transparent;
-  border: none;
-}
-#scoretrackerp1 {
-  margin-left: 5px;
-  background-color: transparent;
-}
+
+.play1,
 .play2 {
   padding: 5px;
-  margin: 5px;
+  padding-left: 40%;
+  padding-right: 40%;
   background-color: transparent;
   border: none;
+  opacity: 0.9;
 }
+
+#scoretrackerp1,
 #scoretrackerp2 {
-  margin-left: 5px;
-  background-color: transparent;
+  padding-left: 3px;
 }
-#chat {
-  padding: 1px;
-}
+
+#chat,
 #name {
-  padding: 1px;
+  padding: 1px 3px;
+  background-color: #307bff;
+  color: #ffffff;
+  border-radius: 5px;
+  border: none;
 }
+
 #input-name {
   color: #cccccc;
   -webkit-text-stroke: 0.75px #ffffff;
   font-size: large;
 }
+
 .chat-box p {
   margin-left: 2px;
   padding: 1px;
+  font-weight: normal;
+  font-size: 16px;
 }
+
 #user1 {
   color: #001fff;
 }
+
 #user2 {
   color: #ff0000;
+}
+
+#disconnect {
+  color: #ff007c;
 }
