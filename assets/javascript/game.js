@@ -87,8 +87,8 @@ playerRef.on("child_removed", function(removedSnap) {
 
 // turn database value listener
 turnRef.on("value", function(turnSnapShot) {
-  turnNumber = turnSnapShot.val().turn;
-  if (firstPlayer && secondPlayer) {
+  if (turnSnapShot.val()) {
+    turnNumber = turnSnapShot.val().turn;
     var turn = `<h3>Turn: ${turnNumber}</h3>`;
     $("#turn").html(turn);
   }
@@ -141,6 +141,7 @@ $("#name").on("click", function(event) {
     playerRef.child("/playerone").set(firstPlayer);
     $(".set-name").hide();
     turnRef.set({ turn: 1 });
+    $("#results").html(`<h2>Waiting for a second player</h2>`);
     playerRef
       .child("/playerone")
       .onDisconnect()
@@ -167,8 +168,8 @@ $("#name").on("click", function(event) {
     };
     playerRef.child("/playertwo").set(secondPlayer);
     $(".set-name").hide();
-    // turnRef.set({ turn: 1 });
-    var secondPlayerAdded = `<h2>${firstPlayer.name}'s turn</2>`;
+    turnRef.set({ turn: 1 });
+    var secondPlayerAdded = `<h2>${firstPlayer.name}'s turn</h2>`;
     resultsRef.set({ result: secondPlayerAdded });
     playerRef
       .child("/playertwo")
