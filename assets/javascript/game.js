@@ -1,3 +1,4 @@
+// Firebase config
 var config = {
   apiKey: "AIzaSyDB75Vy1rhvgCXROeXxbWEAZPQtvWEmyzg",
   authDomain: "rockpaperscissorsduel.firebaseapp.com",
@@ -33,33 +34,35 @@ var yourPlayerName;
 playerRef.on("value", function(playerSnap) {
   // Checking for a first player
   if (playerSnap.child("playerone").exists()) {
-    $("#first-player").html(playerSnap.child("playerone").val().name);
-    $("#player1wins").html(playerSnap.child("playerone").val().wins);
-    $("#player1loses").html(playerSnap.child("playerone").val().loses);
-    $("#player1ties").html(playerSnap.child("playerone").val().ties);
     firstPlayer = {
       name: playerSnap.child("playerone").val().name,
-      loses: playerSnap.child("playerone").val().loses,
+      losses: playerSnap.child("playerone").val().losses,
       ties: playerSnap.child("playerone").val().ties,
       wins: playerSnap.child("playerone").val().wins,
       choice: playerSnap.child("playerone").val().choice,
     };
+    // update player 1s area
+    $("#first-player").html(playerSnap.child("playerone").val().name);
+    $("#player1wins").html(playerSnap.child("playerone").val().wins);
+    $("#player1losses").html(playerSnap.child("playerone").val().losses);
+    $("#player1ties").html(playerSnap.child("playerone").val().ties);
   } else {
     firstPlayer = null;
   }
   // checking for a second player
   if (playerSnap.child("playertwo").exists()) {
-    $("#second-player").html(playerSnap.child("playertwo").val().name);
-    $("#player2wins").html(playerSnap.child("playertwo").val().wins);
-    $("#player2loses").html(playerSnap.child("playertwo").val().loses);
-    $("#player2ties").html(playerSnap.child("playertwo").val().ties);
     secondPlayer = {
       name: playerSnap.child("playertwo").val().name,
-      loses: playerSnap.child("playertwo").val().loses,
+      losses: playerSnap.child("playertwo").val().losses,
       ties: playerSnap.child("playertwo").val().ties,
       wins: playerSnap.child("playertwo").val().wins,
       choice: playerSnap.child("playertwo").val().choice,
     };
+    // update player 2s area
+    $("#second-player").html(playerSnap.child("playertwo").val().name);
+    $("#player2wins").html(playerSnap.child("playertwo").val().wins);
+    $("#player2losses").html(playerSnap.child("playertwo").val().losses);
+    $("#player2ties").html(playerSnap.child("playertwo").val().ties);
   } else {
     secondPlayer = null;
   }
@@ -74,10 +77,18 @@ playerRef.on("value", function(playerSnap) {
   }
 });
 
+// on browser refresh or closed
+playerRef.on("child_removed", function(removedSnap) {
+  childRemoved();
+  console.log(removedSnap.val());
+  var disconnected = $("<p id='disconnect'>" + `${removedSnap.val().name}` + " has left</p>");
+  $("#chat-arena").append(disconnected);
+});
+
 // turn database value listener
 turnRef.on("value", function(turnSnapShot) {
+  turnNumber = turnSnapShot.val().turn;
   if (firstPlayer && secondPlayer) {
-    turnNumber = turnSnapShot.val().turn;
     var turn = `<h3>Turn: ${turnNumber}</h3>`;
     $("#turn").html(turn);
   }
@@ -95,7 +106,6 @@ chatRef.on("child_added", function(childSnapShot) {
       "</p>"
   );
   $("#chat-arena").append(chatValue);
-  // setUserNameColor();
 });
 
 // when a result is added to the results node
@@ -103,18 +113,7 @@ resultsRef.on("value", function(resultSnap) {
   if (firstPlayer && secondPlayer) {
     $("#results").empty();
     $("#results").html(resultSnap.val().result);
-  } else if (!firstPlayer && secondPlayer) {
-    $("#results").empty();
-    $("#results").html(resultSnap.val().result);
-  } else if (firstPlayer && !secondPlayer) {
-    $("#results").empty();
-    $("#results").html(resultSnap.val().result);
   }
-});
-
-// on browser refresh or closed
-playerRef.on("child_removed", function() {
-  childRemoved();
 });
 
 // adding player objects
@@ -128,19 +127,20 @@ $("#name").on("click", function(event) {
       .val()
       .trim() !== ""
   ) {
+    // sets the first players name in browser
     yourPlayerName = $("#player-name")
       .val()
       .trim();
     firstPlayer = {
       name: yourPlayerName,
-      loses: 0,
+      losses: 0,
       ties: 0,
       wins: 0,
       choice: "",
     };
     playerRef.child("/playerone").set(firstPlayer);
     $(".set-name").hide();
-
+    turnRef.set({ turn: 1 });
     playerRef
       .child("/playerone")
       .onDisconnect()
@@ -154,19 +154,20 @@ $("#name").on("click", function(event) {
       .val()
       .trim() !== ""
   ) {
+    // sets second players name in their browser
     yourPlayerName = $("#player-name")
       .val()
       .trim();
     var secondPlayer = {
       name: yourPlayerName,
-      loses: 0,
+      losses: 0,
       ties: 0,
       wins: 0,
       choice: "",
     };
     playerRef.child("/playertwo").set(secondPlayer);
     $(".set-name").hide();
-    turnRef.set({ turn: 1 });
+    // turnRef.set({ turn: 1 });
     var secondPlayerAdded = `<h2>${firstPlayer.name}'s turn</2>`;
     resultsRef.set({ result: secondPlayerAdded });
     playerRef
@@ -240,14 +241,14 @@ function ifPlayersTie() {
 function ifPlayerOneWins() {
   firstPlayer.wins += 1;
   playerRef.child("playerone").set(firstPlayer);
-  secondPlayer.loses += 1;
+  secondPlayer.losses += 1;
   playerRef.child("playertwo").set(secondPlayer);
   var results = `<h2>${firstPlayer.name} won!</h2>`;
   resultsRef.set({ result: results });
 }
 
 function ifPlayerTwoWins() {
-  firstPlayer.loses += 1;
+  firstPlayer.losses += 1;
   playerRef.child("playerone").set(firstPlayer);
   secondPlayer.wins += 1;
   playerRef.child("playertwo").set(secondPlayer);
@@ -281,7 +282,7 @@ function compareChoices() {
 
 function childRemoved() {
   $(".set-name").show();
-  resultsRef.onDisconnect().remove();
-  turnRef.onDisconnect().remove();
-  chatRef.onDisconnect().remove();
+  resultsRef.remove();
+  turnRef.remove();
+  chatRef.remove();
 }
