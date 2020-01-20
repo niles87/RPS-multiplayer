@@ -2,20 +2,20 @@
   margin: 0;
   padding: 0;
 }
-/* html {
-  background-color: #000000;
-} */
+
 body {
   background: url("../images/background_img.png") fixed center;
   background-repeat: no-repeat;
   background-size: cover;
+  font-family: "Raleway", sans-serif;
 }
 
 h1 {
   text-align: center;
   padding: 10px 0;
   margin-bottom: 2%;
-  background-color: #70a2c2;
+  -webkit-text-stroke: 1px #ffffff;
+  font-family: "Audiowide", cursive;
 }
 h2 {
   background-color: #ffffff;
@@ -29,10 +29,7 @@ button {
   display: block;
   outline: none;
 }
-p {
-  padding: 5px;
-  background-color: #ffffff;
-}
+
 .container {
   display: grid;
   grid-template-areas:
@@ -71,6 +68,7 @@ p {
   grid-area: turn;
   text-align: center;
   color: #cccccc;
+  -webkit-text-stroke: 1px #ffffff;
 }
 #player1 {
   grid-area: player1;
@@ -124,8 +122,16 @@ p {
 }
 #input-name {
   color: #cccccc;
+  -webkit-text-stroke: 0.75px #ffffff;
+  font-size: large;
 }
 .chat-box p {
   margin-left: 2px;
   padding: 1px;
+}
+#user1 {
+  color: #001fff;
+}
+#user2 {
+  color: #ff0000;
 }
