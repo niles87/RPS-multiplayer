@@ -26,9 +26,11 @@ var turnNumber;
 
 var yourPlayerName;
 
+/*
 //
 // database functions
 //
+*/
 
 // players node on value change listener
 playerRef.on("value", function(playerSnap) {
@@ -66,18 +68,13 @@ playerRef.on("value", function(playerSnap) {
   } else {
     secondPlayer = null;
   }
-
   // When both players exist hide the set-name form
   if (playerSnap.child("playerone").exists() && playerSnap.child("playertwo").exists()) {
     $(".set-name").hide();
-  } else if (playerSnap.child("playerone").exists() && !playerSnap.child("playertwo").exists()) {
-    $(".set-name").show();
-  } else if (!playerSnap.child("playerone").exists() && playerSnap.child("playertwo").exists()) {
-    $(".set-name").show();
   }
 });
 
-// on browser refresh or closed
+// on a single users browser refresh or closed
 playerRef.on("child_removed", function(removedSnap) {
   childRemoved();
   console.log(removedSnap.val());
@@ -110,13 +107,21 @@ chatRef.on("child_added", function(childSnapShot) {
 
 // when a result is added to the results node
 resultsRef.on("value", function(resultSnap) {
-  if (firstPlayer && secondPlayer) {
-    $("#results").empty();
-    $("#results").html(resultSnap.val().result);
+  if (resultSnap.val()) {
+    if (firstPlayer && secondPlayer) {
+      $("#results").empty();
+      $("#results").html(resultSnap.val().result);
+    }
   }
 });
 
-// adding player objects
+/**
+ *
+ * Button event functions
+ *
+ */
+
+// form submit events to add players to database
 $("#name").on("click", function(event) {
   event.preventDefault();
 
@@ -141,7 +146,7 @@ $("#name").on("click", function(event) {
     playerRef.child("/playerone").set(firstPlayer);
     $(".set-name").hide();
     turnRef.set({ turn: 1 });
-    $("#results").html(`<h2>Waiting for a second player</h2>`);
+    // $("#results").html(`<h2>Waiting for a second player</h2>`);
     playerRef
       .child("/playerone")
       .onDisconnect()
@@ -169,7 +174,7 @@ $("#name").on("click", function(event) {
     playerRef.child("/playertwo").set(secondPlayer);
     $(".set-name").hide();
     turnRef.set({ turn: 1 });
-    var secondPlayerAdded = `<h2>${firstPlayer.name}'s turn</h2>`;
+    var secondPlayerAdded = `<h2>${firstPlayer.name}'s turn.</h2>`;
     resultsRef.set({ result: secondPlayerAdded });
     playerRef
       .child("/playertwo")
@@ -186,7 +191,7 @@ $(".play1").on("click", function() {
     playerRef.child("playerone").set(firstPlayer);
     turnRef.set({ turn: 2 });
 
-    var waitingP = `<h2>Waiting for ${secondPlayer.name} to go</h2>`;
+    var waitingP = `<h2>Waiting for ${secondPlayer.name} to choose.</h2>`;
     resultsRef.set({ result: waitingP });
   }
 });
@@ -228,6 +233,10 @@ $("#chat").on("click", function(event) {
 
   $("#chatbox").val("");
 });
+
+/*
+ * Functions for when game is ready to play
+ */
 
 // functions for game logic
 function ifPlayersTie() {
@@ -282,8 +291,14 @@ function compareChoices() {
 }
 
 function childRemoved() {
-  $(".set-name").show();
-  resultsRef.remove();
-  turnRef.remove();
-  chatRef.remove();
+  database.ref("/results").remove();
+  $("#turn").empty();
+  database.ref("/turn").remove();
+  $("#results").empty();
+  database.ref("/chat").remove();
+  if (!secondPlayer) {
+    $(".set-name").hide();
+  } else if (!firstPlayer) {
+    $(".set-name").hide();
+  }
 }
