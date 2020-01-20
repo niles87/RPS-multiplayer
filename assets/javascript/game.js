@@ -67,7 +67,9 @@ playerRef.on("value", function(playerSnap) {
   // When both players exist hide the set-name form
   if (playerSnap.child("playerone").exists() && playerSnap.child("playertwo").exists()) {
     $(".set-name").hide();
-  } else {
+  } else if (playerSnap.child("playerone").exists() && !playerSnap.child("playertwo").exists()) {
+    $(".set-name").show();
+  } else if (!playerSnap.child("playerone").exists() && playerSnap.child("playertwo").exists()) {
     $(".set-name").show();
   }
 });
@@ -84,14 +86,16 @@ turnRef.on("value", function(turnSnapShot) {
 // when a child is added to the chat node
 chatRef.on("child_added", function(childSnapShot) {
   var chatValue = $(
-    "<p><span class='user'>" +
+    "<p><span id='" +
+      `${childSnapShot.val().userNumber}` +
+      "'>" +
       `${childSnapShot.val().user}` +
       "</span>: " +
       `${childSnapShot.val().chatText}` +
       "</p>"
   );
   $("#chat-arena").append(chatValue);
-  setUserNameColor();
+  // setUserNameColor();
 });
 
 // when a result is added to the results node
@@ -110,10 +114,7 @@ resultsRef.on("value", function(resultSnap) {
 
 // on browser refresh or closed
 playerRef.on("child_removed", function() {
-  resultsRef.remove();
-  turnRef.remove();
-  chatRef.remove();
-  $(".set-name").show();
+  childRemoved();
 });
 
 // adding player objects
@@ -139,10 +140,7 @@ $("#name").on("click", function(event) {
     };
     playerRef.child("/playerone").set(firstPlayer);
     $(".set-name").hide();
-    if (!secondPlayer) {
-      var firstPlayerSet = `<p>Waiting for a second player</p>`;
-      resultsRef.set({ result: firstPlayerSet });
-    }
+
     playerRef
       .child("/playerone")
       .onDisconnect()
@@ -169,7 +167,7 @@ $("#name").on("click", function(event) {
     playerRef.child("/playertwo").set(secondPlayer);
     $(".set-name").hide();
     turnRef.set({ turn: 1 });
-    var secondPlayerAdded = `<p>${firstPlayer.name}'s turn</p>`;
+    var secondPlayerAdded = `<h2>${firstPlayer.name}'s turn</2>`;
     resultsRef.set({ result: secondPlayerAdded });
     playerRef
       .child("/playertwo")
@@ -179,14 +177,14 @@ $("#name").on("click", function(event) {
   $("#player-name").val("");
 });
 
-// button click event for first player
+// click event for first player
 $(".play1").on("click", function() {
   if (turnNumber === 1 && firstPlayer && secondPlayer && yourPlayerName === firstPlayer.name) {
     firstPlayer.choice = $(this).attr("value");
     playerRef.child("playerone").set(firstPlayer);
     turnRef.set({ turn: 2 });
 
-    var waitingP = `<p>Waiting for ${secondPlayer.name} to go</p>`;
+    var waitingP = `<h2>Waiting for ${secondPlayer.name} to go</h2>`;
     resultsRef.set({ result: waitingP });
   }
 });
@@ -212,6 +210,7 @@ $("#chat").on("click", function(event) {
     chatRef.push({
       user: yourPlayerName,
       chatText: chat,
+      userNumber: "user1",
     });
   } else if (yourPlayerName === secondPlayer.name) {
     var chat = $("#chatbox")
@@ -221,13 +220,14 @@ $("#chat").on("click", function(event) {
     chatRef.push({
       user: yourPlayerName,
       chatText: chat,
+      userNumber: "user2",
     });
   }
 
   $("#chatbox").val("");
 });
 
-// functions for game results
+// functions for game logic
 function ifPlayersTie() {
   firstPlayer.ties += 1;
   playerRef.child("playerone").set(firstPlayer);
@@ -236,6 +236,7 @@ function ifPlayersTie() {
   var results = `<h2>It's a tie!</h2>`;
   resultsRef.set({ result: results });
 }
+
 function ifPlayerOneWins() {
   firstPlayer.wins += 1;
   playerRef.child("playerone").set(firstPlayer);
@@ -244,6 +245,7 @@ function ifPlayerOneWins() {
   var results = `<h2>${firstPlayer.name} won!</h2>`;
   resultsRef.set({ result: results });
 }
+
 function ifPlayerTwoWins() {
   firstPlayer.loses += 1;
   playerRef.child("playerone").set(firstPlayer);
@@ -277,11 +279,9 @@ function compareChoices() {
   turnRef.set({ turn: 1 });
 }
 
-// setting the color of name in chat area
-function setUserNameColor() {
-  if (yourPlayerName === firstPlayer.name) {
-    $(".user").css("color", "#001fff");
-  } else {
-    $(".user").css("color", "#ff0000");
-  }
+function childRemoved() {
+  $(".set-name").show();
+  resultsRef.onDisconnect().remove();
+  turnRef.onDisconnect().remove();
+  chatRef.onDisconnect().remove();
 }
