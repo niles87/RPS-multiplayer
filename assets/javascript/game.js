@@ -34,7 +34,7 @@ var yourPlayerName;
 
 // players node on value change listener
 playerRef.on("value", function(playerSnap) {
-  // Checking for a first player
+  // Checking for a player one then saving their values
   if (playerSnap.child("playerone").exists()) {
     firstPlayer = {
       name: playerSnap.child("playerone").val().name,
@@ -51,7 +51,7 @@ playerRef.on("value", function(playerSnap) {
   } else {
     firstPlayer = null;
   }
-  // checking for a second player
+  // checking for a second player then saving their values
   if (playerSnap.child("playertwo").exists()) {
     secondPlayer = {
       name: playerSnap.child("playertwo").val().name,
@@ -72,13 +72,22 @@ playerRef.on("value", function(playerSnap) {
   if (playerSnap.child("playerone").exists() && playerSnap.child("playertwo").exists()) {
     $(".set-name").hide();
   }
+  // if there is no player two
+  else if (playerSnap.child("playerone").exists() && !playerSnap.child("playertwo").exists()) {
+    $("#results").html(`<h2>Waiting for a second player</h2>`);
+  }
+  // if there is no player one
+  else if (playerSnap.child("playertwo").exists() && !playerSnap.child("playerone").exists()) {
+    $("#results").html(`<h2>Waiting for a second player</h2>`);
+  }
 });
 
 // on a single users browser refresh or closed
 playerRef.on("child_removed", function(removedSnap) {
   childRemoved();
-  console.log(removedSnap.val());
-  var disconnected = $("<p id='disconnect'>" + `${removedSnap.val().name}` + " has left</p>");
+  var disconnected = $(
+    "<p id='disconnect'>" + `${removedSnap.val().name}` + " has left the game.</p>"
+  );
   $("#chat-arena").append(disconnected);
 });
 
@@ -136,6 +145,7 @@ $("#name").on("click", function(event) {
     yourPlayerName = $("#player-name")
       .val()
       .trim();
+    // creates the player object
     firstPlayer = {
       name: yourPlayerName,
       losses: 0,
@@ -143,10 +153,13 @@ $("#name").on("click", function(event) {
       wins: 0,
       choice: "",
     };
+    // saves firstPlayer to the playerone node
     playerRef.child("/playerone").set(firstPlayer);
     $(".set-name").hide();
+    // saves the turn number to the database, need this line of code for a player one disconnect
     turnRef.set({ turn: 1 });
-    // $("#results").html(`<h2>Waiting for a second player</h2>`);
+
+    // on player disconnect removes playerone node
     playerRef
       .child("/playerone")
       .onDisconnect()
@@ -164,23 +177,28 @@ $("#name").on("click", function(event) {
     yourPlayerName = $("#player-name")
       .val()
       .trim();
-    var secondPlayer = {
+    // creates secondPlayer object
+    secondPlayer = {
       name: yourPlayerName,
       losses: 0,
       ties: 0,
       wins: 0,
       choice: "",
     };
+    // saves secondplayer to the playertwo node
     playerRef.child("/playertwo").set(secondPlayer);
     $(".set-name").hide();
     turnRef.set({ turn: 1 });
     var secondPlayerAdded = `<h2>${firstPlayer.name}'s turn.</h2>`;
     resultsRef.set({ result: secondPlayerAdded });
+
+    // on secondplayer disconnect removes the playertwo node
     playerRef
       .child("/playertwo")
       .onDisconnect()
       .remove();
   }
+  // after user submit clears input box
   $("#player-name").val("");
 });
 
@@ -188,6 +206,7 @@ $("#name").on("click", function(event) {
 $(".play1").on("click", function() {
   if (turnNumber === 1 && firstPlayer && secondPlayer && yourPlayerName === firstPlayer.name) {
     firstPlayer.choice = $(this).attr("value");
+    // saves firstplayers choice into the database
     playerRef.child("playerone").set(firstPlayer);
     turnRef.set({ turn: 2 });
 
@@ -200,6 +219,7 @@ $(".play1").on("click", function() {
 $(".play2").on("click", function() {
   if (turnNumber === 2 && firstPlayer && secondPlayer && yourPlayerName === secondPlayer.name) {
     secondPlayer.choice = $(this).attr("value");
+    // saves secondPlayers choice to the database
     playerRef.child("playertwo").set(secondPlayer);
     compareChoices();
   }
@@ -231,6 +251,7 @@ $("#chat").on("click", function(event) {
     });
   }
 
+  // after user submit, clears the input box for next message
   $("#chatbox").val("");
 });
 
@@ -287,9 +308,13 @@ function compareChoices() {
   } else if (firstPlayer.choice === "s" && secondPlayer.choice === "p") {
     ifPlayerOneWins();
   }
+
+  // after choices compared sets turn to one to start game action over
   turnRef.set({ turn: 1 });
 }
 
+/* added this function to get proper results when a player disconnects,
+ * needed to space out the node removals so they would actually occur */
 function childRemoved() {
   database.ref("/results").remove();
   $("#turn").empty();
