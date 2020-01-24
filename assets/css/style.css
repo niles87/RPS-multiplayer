@@ -20,7 +20,7 @@ h1 {
 }
 
 h2 {
-  background-color: #ffffff;
+  text-align: center;
   padding: 1px 3px;
 }
 
@@ -44,8 +44,8 @@ button {
   grid-template-areas:
     ". . . . set-name . . . ."
     ". . . . turn . . . ."
-    ". player1 . . results . . player2 ."
-    ". player1 . . results . . player2 ."
+    ". . player1 . results . player2 . ."
+    ". . player1 . results . player2 . ."
     ". . . . textbox . . . ."
     ". . . . textbox . . . .";
 }
@@ -158,4 +158,14 @@ button {
 
 #disconnect {
   color: #ff007c;
+}
+
+#player1 h3,
+#player2 h3 {
+  text-align: center;
+}
+
+#scoretrackerp1 span,
+#scoretrackerp2 span {
+  color: #fefefe;
 }
