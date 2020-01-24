@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Rock Paper Scissors Duel</title>
+    <!-- Fontawesome -->
     <script src="https://kit.fontawesome.com/07d4bd49a2.js" crossorigin="anonymous"></script>
+    <!-- Google Font -->
     <link
       href="https://fonts.googleapis.com/css?family=Audiowide|Raleway:400,700&display=swap"
       rel="stylesheet"
     />
+    <!-- Jquery -->
     <script
       src="https://code.jquery.com/jquery-3.4.1.min.js"
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -19,6 +22,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-auth.js"></script>
+    <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
@@ -26,6 +30,7 @@
 
     <div class="container">
       <div id="turn"></div>
+
       <div class="set-name">
         <form id="name-input">
           <label id="input-name" for="player-name">Choose your name</label>
@@ -33,6 +38,7 @@
           <input type="submit" value="name" id="name" />
         </form>
       </div>
+
       <div class="box" id="player1">
         <h3><span id="first-player"></span></h3>
 
@@ -41,12 +47,15 @@
         <button class="play1" value="p"><i class="fas fa-hand-paper fa-3x"></i></button>
 
         <button class="play1" value="s"><i class="fas fa-hand-scissors fa-3x"></i></button>
+
         <p id="scoretrackerp1">
           Wins: <span id="player1wins"></span>, Losses: <span id="player1losses"></span>, Ties:
           <span id="player1ties"></span>
         </p>
       </div>
+
       <div class="box" id="results"></div>
+
       <div class="box" id="player2">
         <h3><span id="second-player"></span></h3>
 
@@ -60,6 +69,7 @@
           <span id="player2ties"></span>
         </p>
       </div>
+
       <div class="textbox">
         <form>
           <div class="chat-box" id="chat-arena"></div>
