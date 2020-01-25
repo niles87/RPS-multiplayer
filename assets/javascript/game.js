@@ -88,7 +88,7 @@ playerRef.on("child_removed", function(removedSnap) {
   var disconnected = $(
     "<p id='disconnect'>" + `${removedSnap.val().name}` + " has left the game.</p>"
   );
-  $("#chat-arena").append(disconnected);
+  $("#chat-arena").prepend(disconnected);
 });
 
 // turn database value listener
@@ -111,7 +111,7 @@ chatRef.on("child_added", function(childSnapShot) {
       `${childSnapShot.val().chatText}` +
       "</p>"
   );
-  $("#chat-arena").append(chatValue);
+  $("#chat-arena").prepend(chatValue);
 });
 
 // when a result is added to the results node
