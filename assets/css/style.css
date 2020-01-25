@@ -8,6 +8,7 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   font-family: "Raleway", sans-serif;
+  cursor: default;
 }
 
 h1 {
@@ -37,6 +38,10 @@ p {
 button {
   display: block;
   outline: none;
+}
+
+i {
+  cursor: pointer;
 }
 
 .container {
@@ -168,4 +173,45 @@ button {
 #scoretrackerp1 span,
 #scoretrackerp2 span {
   color: #fefefe;
+}
+
+@media only screen and (max-width: 740px) {
+  h1 {
+    font-size: 30px;
+  }
+  h2 {
+    font-size: 15px;
+  }
+  h3 {
+    font-size: 15px;
+  }
+  p {
+    font-size: 15px;
+  }
+  .container {
+    display: grid;
+    grid-template-areas:
+      ". set-name ."
+      ". player1 ."
+      ". results ."
+      ". turn ."
+      ". player2 ."
+      ". textbox .";
+  }
+  .box {
+    width: 40%;
+  }
+  .set-name {
+    margin-bottom: 1%;
+  }
+  .textbox {
+    margin-bottom: 5%;
+  }
+  #results {
+    margin-bottom: 0;
+    height: 60px;
+  }
+  .fa-3x {
+    font-size: 2em;
+  }
 }
