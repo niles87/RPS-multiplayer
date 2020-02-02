@@ -141,8 +141,7 @@ i {
 }
 
 #input-name {
-  color: #cccccc;
-  -webkit-text-stroke: 0.75px #ffffff;
+  color: #000000;
   font-size: large;
 }
 
