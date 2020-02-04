@@ -73,11 +73,19 @@ playerRef.on("value", function(playerSnap) {
     $(".set-name").hide();
   }
   // if there is no player two
-  else if (playerSnap.child("playerone").exists() && !playerSnap.child("playertwo").exists()) {
+  else if (
+    playerSnap.child("playerone").exists() &&
+    !playerSnap.child("playertwo").exists() &&
+    yourPlayerName
+  ) {
     $("#results").html(`<h2>Waiting for a second player</h2>`);
   }
   // if there is no player one
-  else if (playerSnap.child("playertwo").exists() && !playerSnap.child("playerone").exists()) {
+  else if (
+    playerSnap.child("playertwo").exists() &&
+    !playerSnap.child("playerone").exists() &&
+    yourPlayerName
+  ) {
     $("#results").html(`<h2>Waiting for a second player</h2>`);
   }
 });
@@ -260,7 +268,23 @@ $("#chat").on("click", function(event) {
  */
 
 // functions for game logic
-function ifPlayersTie() {
+function resultsWinLoseHandler(winner, loser) {
+  winner.wins += 1;
+  loser.losses += 1;
+  if (winner === firstPlayer) {
+    var results = `<h2>${winner.name} won!</h2>`;
+    playerRef.child("playerone").set(winner);
+    resultsRef.set({ result: results });
+    playerRef.child("playertwo").set(loser);
+  } else if (winner === secondPlayer) {
+    var results = `<h2>${winner.name} won!</h2>`;
+    playerRef.child("playerone").set(loser);
+    resultsRef.set({ result: results });
+    playerRef.child("playertwo").set(winner);
+  }
+}
+
+function resultsTieHandler() {
   firstPlayer.ties += 1;
   playerRef.child("playerone").set(firstPlayer);
   secondPlayer.ties += 1;
@@ -269,44 +293,26 @@ function ifPlayersTie() {
   resultsRef.set({ result: results });
 }
 
-function ifPlayerOneWins() {
-  firstPlayer.wins += 1;
-  playerRef.child("playerone").set(firstPlayer);
-  secondPlayer.losses += 1;
-  playerRef.child("playertwo").set(secondPlayer);
-  var results = `<h2>${firstPlayer.name} won!</h2>`;
-  resultsRef.set({ result: results });
-}
-
-function ifPlayerTwoWins() {
-  firstPlayer.losses += 1;
-  playerRef.child("playerone").set(firstPlayer);
-  secondPlayer.wins += 1;
-  playerRef.child("playertwo").set(secondPlayer);
-  var results = `<h2>${secondPlayer.name} won!</h2>`;
-  resultsRef.set({ result: results });
-}
-
 // main game logic
 function compareChoices() {
   if (firstPlayer.choice === "r" && secondPlayer.choice === "r") {
-    ifPlayersTie();
+    resultsTieHandler();
   } else if (firstPlayer.choice === "p" && secondPlayer.choice === "p") {
-    ifPlayersTie();
+    resultsTieHandler();
   } else if (firstPlayer.choice === "s" && secondPlayer.choice === "s") {
-    ifPlayersTie();
+    resultsTieHandler();
   } else if (firstPlayer.choice === "r" && secondPlayer.choice === "p") {
-    ifPlayerTwoWins();
+    resultsWinLoseHandler(secondPlayer, firstPlayer);
   } else if (firstPlayer.choice === "p" && secondPlayer.choice === "s") {
-    ifPlayerTwoWins();
+    resultsWinLoseHandler(secondPlayer, firstPlayer);
   } else if (firstPlayer.choice === "s" && secondPlayer.choice === "r") {
-    ifPlayerTwoWins();
+    resultsWinLoseHandler(secondPlayer, firstPlayer);
   } else if (firstPlayer.choice === "r" && secondPlayer.choice === "s") {
-    ifPlayerOneWins();
+    resultsWinLoseHandler(firstPlayer, secondPlayer);
   } else if (firstPlayer.choice === "p" && secondPlayer.choice === "r") {
-    ifPlayerOneWins();
+    resultsWinLoseHandler(firstPlayer, secondPlayer);
   } else if (firstPlayer.choice === "s" && secondPlayer.choice === "p") {
-    ifPlayerOneWins();
+    resultsWinLoseHandler(firstPlayer, secondPlayer);
   }
 
   // after choices compared sets turn to one to start game action over
