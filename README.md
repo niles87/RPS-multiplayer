@@ -2,7 +2,7 @@
 
 ### How RPS Works
 
-<img src="assets/images/rps.gif">
+<p align="center"><img src="assets/images/rps.gif"></p>
 
 ## Overview
 
